@@ -337,8 +337,14 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 	 * @see #isExistingTransaction
 	 * @see #doBegin
 	 */
+	/**
+	 * 根据TransactionDefinition定义的传播机制等开启一个事务
+	 */
 	@Override
 	public final TransactionStatus getTransaction(@Nullable TransactionDefinition definition) throws TransactionException {
+		/**
+		 * 返回 transactionObject 以判断是否存在当前事务
+		 */
 		Object transaction = doGetTransaction();
 
 		// Cache debug flag to avoid repeated checks.
@@ -349,8 +355,15 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 			definition = new DefaultTransactionDefinition();
 		}
 
+		/**
+		 * 判断是否存在当前事务
+		 * isExistingTransaction()默认返回false 需要子类覆盖
+		 */
 		if (isExistingTransaction(transaction)) {
 			// Existing transaction found -> check propagation behavior to find out how to behave.
+			/**
+			 * 根据 TransactionDefinition 定义的事务传播机制，处理当前事务
+			 */
 			return handleExistingTransaction(definition, transaction, debugEnabled);
 		}
 

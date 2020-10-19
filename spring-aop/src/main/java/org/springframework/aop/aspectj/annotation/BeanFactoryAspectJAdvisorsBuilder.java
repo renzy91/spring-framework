@@ -80,6 +80,12 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 	 * @return the list of {@link org.springframework.aop.Advisor} beans
 	 * @see #isEligibleBean
 	 */
+	/**
+	 * 1. 获取所有 beanName，这一步骤中所有在 beanFacotry 中注册的 bean 都会被提取出来。
+	 * 2. 遍历所有 beanName， 并找出声明 Aspect}注解的类 ，进行进一步的处理。
+	 * 3. 对标记为 Aspect}注解的类进行增强器的提取。
+	 * 4. 将提取结果加入缓存。
+	 */
 	public List<Advisor> buildAspectJAdvisors() {
 		List<String> aspectNames = this.aspectBeanNames;
 
@@ -89,29 +95,38 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 				if (aspectNames == null) {
 					List<Advisor> advisors = new ArrayList<>();
 					aspectNames = new ArrayList<>();
+					//获取所有的 beanName
 					String[] beanNames = BeanFactoryUtils.beanNamesForTypeIncludingAncestors(
 							this.beanFactory, Object.class, true, false);
+					//循环所有的 beanName 找出对应的增强方法
 					for (String beanName : beanNames) {
+						//不合法的bean则略过，由子类定义规则，默认返回 true
 						if (!isEligibleBean(beanName)) {
 							continue;
 						}
+
+						//获取对应的 bean 的类型
 						// We must be careful not to instantiate beans eagerly as in this case they
 						// would be cached by the Spring container but would not have been weaved.
 						Class<?> beanType = this.beanFactory.getType(beanName);
 						if (beanType == null) {
 							continue;
 						}
+						//如果存在 Aspect 注解
 						if (this.advisorFactory.isAspect(beanType)) {
 							aspectNames.add(beanName);
 							AspectMetadata amd = new AspectMetadata(beanType, beanName);
 							if (amd.getAjType().getPerClause().getKind() == PerClauseKind.SINGLETON) {
 								MetadataAwareAspectInstanceFactory factory =
 										new BeanFactoryAspectInstanceFactory(this.beanFactory, beanName);
+								//解析 @AspectJ 注解中的增强方法
 								List<Advisor> classAdvisors = this.advisorFactory.getAdvisors(factory);
 								if (this.beanFactory.isSingleton(beanName)) {
+									// 单例直接存储
 									this.advisorsCache.put(beanName, classAdvisors);
 								}
 								else {
+									// 非单例存储工厂类
 									this.aspectFactoryCache.put(beanName, factory);
 								}
 								advisors.addAll(classAdvisors);

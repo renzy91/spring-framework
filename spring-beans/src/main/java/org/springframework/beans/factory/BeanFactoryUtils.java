@@ -56,6 +56,8 @@ public abstract class BeanFactoryUtils {
 	 * Cache from name with factory bean prefix to stripped name without dereference.
 	 * @since 5.1
 	 * @see BeanFactory#FACTORY_BEAN_PREFIX
+	 *
+	 * 缓存 {@link #transformedBeanName(String)} 已经转换好的结果。
 	 */
 	private static final Map<String, String> transformedBeanNameCache = new ConcurrentHashMap<>();
 
@@ -72,6 +74,10 @@ public abstract class BeanFactoryUtils {
 	}
 
 	/**
+	 * 去除 FactoryBean 的修饰符 &
+	 * 如果 name 以 “&” 为前缀，那么会去掉该 "&" 。
+	 * 例如，name = "&studentService" ，则会是 name = "studentService"。
+	 *
 	 * Return the actual bean name, stripping out the factory dereference
 	 * prefix (if any, also stripping repeated factory prefixes if found).
 	 * @param name the name of the bean

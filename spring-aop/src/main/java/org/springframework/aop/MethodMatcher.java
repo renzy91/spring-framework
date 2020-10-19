@@ -69,6 +69,10 @@ public interface MethodMatcher {
 	 * {@link #matches(java.lang.reflect.Method, Class, Object[])} method
 	 * is required if static matching passed
 	 */
+	/**
+	 * 判断是否是运行时，如果是运行时则会调用下面三参数 matches ，否则只用上面两参数 matches 判断
+	 * @return
+	 */
 	boolean isRuntime();
 
 	/**

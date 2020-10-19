@@ -71,23 +71,36 @@ public abstract class AopNamespaceUtils {
 		registerComponentIfNecessary(beanDefinition, parserContext);
 	}
 
+	// 注册AnnotationAwareAspectJAutoProxyCreator
 	public static void registerAspectJAnnotationAutoProxyCreatorIfNecessary(
 			ParserContext parserContext, Element sourceElement) {
 
+		// 注册或升级 AutoProxyCreator 定义 beanName
+		// 为org.Springframework.aop.connfig.internalAutoProxyCreator 的 BeanDefinition
+		// 可以根据 @Point 注解定义的切点来自动代理相匹配的bean
 		BeanDefinition beanDefinition = AopConfigUtils.registerAspectJAnnotationAutoProxyCreatorIfNecessary(
 				parserContext.getRegistry(), parserContext.extractSource(sourceElement));
+		// 对于 proxy-target-class 以及 expose-proxy 属性的处理
+		// <aop:config proxy-target-class="true"> true：基于类的代理，需要cglib库；false或者省略这个属性：JDK代理
+		// <aop:aspectj-autoproxy expose-proxy="true" /> 内部调用事务生效
 		useClassProxyingIfNecessary(parserContext.getRegistry(), sourceElement);
+		// 注册组件并通知，便于监听器做进一步处理
+		// 其中beanDefinition 的 className 为 AnnotationAwareAspectJAutoProxyCreator
 		registerComponentIfNecessary(beanDefinition, parserContext);
 	}
 
 	private static void useClassProxyingIfNecessary(BeanDefinitionRegistry registry, @Nullable Element sourceElement) {
 		if (sourceElement != null) {
+			// 获取proxy-target-class值
 			boolean proxyTargetClass = Boolean.parseBoolean(sourceElement.getAttribute(PROXY_TARGET_CLASS_ATTRIBUTE));
 			if (proxyTargetClass) {
+				// 强制使用基于类的代理cglib
 				AopConfigUtils.forceAutoProxyCreatorToUseClassProxying(registry);
 			}
+			// 获取expose-proxy
 			boolean exposeProxy = Boolean.parseBoolean(sourceElement.getAttribute(EXPOSE_PROXY_ATTRIBUTE));
 			if (exposeProxy) {
+				// 允许内部类内部调用使用代理
 				AopConfigUtils.forceAutoProxyCreatorToExposeProxy(registry);
 			}
 		}

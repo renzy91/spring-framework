@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	<bean class="A" id="a" scope="singleton" init-method="afterPropertiesSet"/>
+	<bean id="aa" class="ABeanFactory"/>
+
+	<bean id="staticA" class="AFactory" factory-method="staticGetA"/>
+
+
+	<bean id="circleA" class="CircleA">
+		<property name="name" value="${circleA.name}"/>
+		<!--<property name="circleB" ref="circleB"/>-->
+	</bean>
+	<bean id="circleB" class="CircleB">
+		<property name="circleA" ref="circleA"/>
+	</bean>
+
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location" value="classpath:bean.properties"/>
+	</bean>
+</beans>

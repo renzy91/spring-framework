@@ -52,6 +52,8 @@ public class BeansDtdResolver implements EntityResolver {
 
 	@Override
 	@Nullable
+	// systemId中有spring-beans且以.dtd结尾，则取spring-beans.dtd返回
+	// 否则返回使用默认行为，从网络下载
 	public InputSource resolveEntity(String publicId, @Nullable String systemId) throws IOException {
 		if (logger.isTraceEnabled()) {
 			logger.trace("Trying to resolve XML entity with public ID [" + publicId +

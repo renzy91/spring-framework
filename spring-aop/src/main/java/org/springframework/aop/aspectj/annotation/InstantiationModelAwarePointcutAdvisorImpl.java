@@ -79,19 +79,24 @@ final class InstantiationModelAwarePointcutAdvisorImpl
 	@Nullable
 	private Boolean isAfterAdvice;
 
-
 	public InstantiationModelAwarePointcutAdvisorImpl(AspectJExpressionPointcut declaredPointcut,
 			Method aspectJAdviceMethod, AspectJAdvisorFactory aspectJAdvisorFactory,
 			MetadataAwareAspectInstanceFactory aspectInstanceFactory, int declarationOrder, String aspectName) {
 
+		// 切点
 		this.declaredPointcut = declaredPointcut;
+		// @Aspect注解的类
 		this.declaringClass = aspectJAdviceMethod.getDeclaringClass();
+		// 通知增强方法名称
 		this.methodName = aspectJAdviceMethod.getName();
 		this.parameterTypes = aspectJAdviceMethod.getParameterTypes();
+		// 通知增强方法
 		this.aspectJAdviceMethod = aspectJAdviceMethod;
+		//
 		this.aspectJAdvisorFactory = aspectJAdvisorFactory;
 		this.aspectInstanceFactory = aspectInstanceFactory;
 		this.declarationOrder = declarationOrder;
+		//  @Aspect注解的类名称
 		this.aspectName = aspectName;
 
 		if (aspectInstanceFactory.getAspectMetadata().isLazilyInstantiated()) {
@@ -110,6 +115,7 @@ final class InstantiationModelAwarePointcutAdvisorImpl
 			// A singleton aspect.
 			this.pointcut = this.declaredPointcut;
 			this.lazy = false;
+			// 根据以上信息初始化对应的增强器
 			this.instantiatedAdvice = instantiateAdvice(this.declaredPointcut);
 		}
 	}

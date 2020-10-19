@@ -38,6 +38,7 @@ public class ReplaceOverride extends MethodOverride {
 
 	private final String methodReplacerBeanName;
 
+	// 参数或参数类型
 	private List<String> typeIdentifiers = new LinkedList<>();
 
 

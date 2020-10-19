@@ -1,0 +1,13 @@
+description = "Spring AOP"
+
+dependencies {
+	compile(project(":spring-beans"))
+	compile(project(":spring-core"))
+	compile(project(":spring-context"))
+	compile(project(":spring-instrument"))
+	compile(project(":spring-aspects"))
+//	compile(project(":spring-context-support"))
+//	compile(project(":spring-tx"))
+	compile(project(":spring-jdbc"))
+	compile group: 'org.mybatis', name: 'mybatis', version: '3.5.4'
+}
